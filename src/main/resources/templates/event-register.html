@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Register for Event</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .form-container {
+      max-width: 700px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #6a1b9a;
+      margin-bottom: 2rem;
+    }
+    .form-label {
+      font-weight: 500;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <a href="/user/dashboard" class="btn btn-secondary back-button">&larr; Back</a>
+
+  <h2 th:text="'Register for: ' + ${event.title}">Event</h2>
+
+  <form th:action="@{/user/events/{id}/register(id=${event.id})}" method="post">
+    <div th:each="field : ${event.fields}" class="form-group">
+      <label class="form-label" th:text="${field.label}"></label>
+
+      <!-- Text / Email input -->
+      <input th:if="${field.type == 'text' or field.type == 'email'}"
+             class="form-control"
+             th:attr="type=${field.type}, name=${field.label}" required />
+
+      <!-- Textarea -->
+      <textarea th:if="${field.type == 'textarea'}"
+                class="form-control"
+                rows="3"
+                th:attr="name=${field.label}" required></textarea>
+
+      <!-- Options (dropdown) -->
+      <select th:if="${field.type == 'options'}"
+              class="form-select"
+              th:attr="name=${field.label}" required>
+        <option value="">-- Select --</option>
+        <option th:each="opt : ${field.options}"
+                th:value="${opt}"
+                th:text="${opt}">Option</option>
+      </select>
+    </div>
+
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary px-5">Submit</button>
+    </div>
+  </form>
+</div>
+</body>
+</html>
