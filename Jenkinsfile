@@ -2,19 +2,28 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven-3.9.6'  // Make sure this is configured in Jenkins
+        maven 'maven-3.9.6'
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build JAR') {
             steps {
                 sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Run Spring Boot App') {
+            steps {
+                sh '''
+                pkill -f "java -jar" || true  # Stop previous instance (Linux/Mac only)
+                nohup java -jar target/*.jar > app.log 2>&1 &
+                '''
             }
         }
 
